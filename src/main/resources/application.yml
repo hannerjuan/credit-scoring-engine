@@ -1,0 +1,70 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: credit-scoring-engine
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:credit_scoring}
+    username: ${DB_USER:credit_scoring}
+    password: ${DB_PASSWORD:credit_scoring}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      # ddl-auto=update es conveniente para desarrollo/demo. En produccion se
+      # recomienda ddl-auto=validate y versionar el esquema (ver db/schema.sql)
+      # con una herramienta de migraciones (Flyway/Liquibase).
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+    show-sql: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+# Configuracion del motor de reglas. Cada politica de riesgo puede activarse,
+# desactivarse o reponderarse aqui sin tocar el codigo (ver ScoringEngineConfig).
+scoring:
+  dti:
+    umbral-optimo: 35
+    umbral-maximo: 45
+    puntos-optimo: 300
+    puntos-intermedio: 150
+    activa: true
+  mora:
+    activa: true
+  score-buro:
+    activa: true
+  estabilidad-laboral:
+    activa: true
+  historial-crediticio:
+    activa: true
+  nivel-ingresos:
+    umbral-alto: 5000000
+    umbral-medio: 2000000
+    activa: true
+  capacidad-pago:
+    activa: true
+  edad-minima:
+    valor: 18
+    activa: true
+  dictamen:
+    score-corte-aprobacion: 700
+    dti-maximo-aprobacion: 40
+    score-minimo-absoluto: 400
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
